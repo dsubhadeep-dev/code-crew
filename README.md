@@ -15,7 +15,7 @@ pip install -r requirements.txt
 python app.py
 ```
 
-Open http://localhost:5000
+Open http://127.0.0.1:5000
 
 A `hrms.db` SQLite file is created automatically on first run, seeded with:
 
