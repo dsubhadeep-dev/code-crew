@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+{% block title %}{{ target.name }} — Profile{% endblock %}
+{% block content %}
+{% set editable = is_own_profile or can_edit_all %}
+{% set view_only = not is_own_profile and not can_edit_all %}
+
+<div class="page-header">
+  <div>
+    <h1>{{ target.name }}</h1>
+    <p class="subtitle">{{ target.job_position or '—' }} · {{ target.department or '—' }} {% if view_only %}· view only{% endif %}</p>
+  </div>
+</div>
+
+<div class="profile-hero card" style="margin-bottom:18px;">
+  <div style="display:flex; align-items:center; gap:14px;">
+    <div class="avatar" style="width:84px;height:84px;font-size:28px;{% if target.profile_picture %} background-image:url('{{ url_for('static', filename=target.profile_picture) }}'); background-size:cover; background-position:center;{% endif %}">{% if not target.profile_picture %}{{ target.name[:1] }}{% endif %}</div>
+    <div>
+      <h2 style="margin:0 0 6px;">{{ target.name }}</h2>
+      <div class="subtitle">{{ target.job_position or '—' }} · {{ target.department or '—' }}</div>
+      <div style="margin-top:10px; display:flex; gap:12px;">
+        <div class="badge present">Active</div>
+        <div class="badge">Member since {{ target.date_of_joining or '—' }}</div>
+        <div class="badge">Emp: {{ target.emp_code or '—' }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tabs">
+  <a href="?tab=profile" class="{{ 'active' if tab=='profile' }}">Profile</a>
+  <a href="?tab=private" class="{{ 'active' if tab=='private' }}">Private Info</a>
+  <a href="?tab=resume" class="{{ 'active' if tab=='resume' }}">Resume</a>
+  <a href="?tab=skills" class="{{ 'active' if tab=='skills' }}">Skills</a>
+  <a href="?tab=certifications" class="{{ 'active' if tab=='certifications' }}">Certification</a>
+  {% if can_edit_all %}
+  <a href="?tab=salary" class="{{ 'active' if tab=='salary' }}">Salary Info</a>
+  {% endif %}
+</div>
+
+{% if tab == 'profile' %}
+  <div class="card">
+    <form method="POST" action="{{ url_for('edit_profile', user_id=target.id) }}" enctype="multipart/form-data">
+      <input type="hidden" name="tab" value="profile">
+      <div style="display:flex; align-items:center; gap:16px; margin-bottom:20px;">
+        <div class="avatar" style="width:64px;height:64px;font-size:22px;{% if target.profile_picture %} background-image:url('{{ url_for('static', filename=target.profile_picture) }}'); background-size:cover; background-position:center;{% endif %}">{% if not target.profile_picture %}{{ target.name[:1] }}{% endif %}</div>
+        {% if editable %}
+        <div class="field" style="margin:0; flex:1; max-width:300px;">
+          <label for="profile_picture">Profile picture</label>
+          <input id="profile_picture" type="file" name="profile_picture" accept="image/*">
+        </div>
+        {% endif %}
+      </div>
+      <div class="form-row">
+        <div class="field"><label for="name">Name</label>
+          {% if can_edit_all %}
+            <input id="name" type="text" name="name" value="{{ target.name }}">
+          {% else %}
+            <div class="info-tile">{{ target.name }}</div>
+          {% endif %}
+        </div>
+        <div class="field"><label for="phone">Mobile</label>
+          {% if editable %}
+            <input id="phone" type="text" name="phone" value="{{ target.phone or '' }}">
+          {% else %}
+            <div class="info-tile">{{ target.phone or '—' }}</div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label for="email">Email</label>
+          {% if can_edit_all %}
+            <input id="email" type="email" name="email" value="{{ target.email or '' }}">
+          {% else %}
+            <div class="info-tile">{{ target.email or '—' }}</div>
+          {% endif %}
+        </div>
+        <div class="field"><label for="department">Department</label>
+          {% if can_edit_all %}
+            <input id="department" type="text" name="department" value="{{ target.department or '' }}">
+          {% else %}
+            <div class="info-tile">{{ target.department or '—' }}</div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label for="manager">Manager</label>
+          {% if can_edit_all %}
+            <input id="manager" type="text" name="manager" value="{{ target.manager or '' }}">
+          {% else %}
+            <div class="info-tile">{{ target.manager or '—' }}</div>
+          {% endif %}
+        </div>
+        <div class="field"><label for="company">Company</label>
+          <div class="info-tile" id="company">{{ target.company or '—' }}</div>
+        </div>
+      </div>
+      <div class="field"><label for="location">Location</label>
+        {% if can_edit_all %}
+          <input id="location" type="text" name="location" value="{{ target.location or '' }}">
+        {% else %}
+          <div class="info-tile">{{ target.location or '—' }}</div>
+        {% endif %}
+      </div>
+      <div class="field"><label for="about">About</label>
+        {% if editable %}
+          <textarea id="about" name="about" rows="3">{{ target.about or '' }}</textarea>
+        {% else %}
+          <div class="info-tile">{{ target.about or '—' }}</div>
+        {% endif %}
+      </div>
+      <div class="field"><label for="job_love_note">What I love about my job</label>
+        {% if editable %}
+          <textarea id="job_love_note" name="job_love_note" rows="3">{{ target.job_love_note or '' }}</textarea>
+        {% else %}
+          <div class="info-tile">{{ target.job_love_note or '—' }}</div>
+        {% endif %}
+      </div>
+      <div class="field"><label for="hobbies">My interests and hobbies</label>
+        {% if editable %}
+          <textarea id="hobbies" name="hobbies" rows="3">{{ target.hobbies or '' }}</textarea>
+        {% else %}
+          <div class="info-tile">{{ target.hobbies or '—' }}</div>
+        {% endif %}
+      </div>
+      {% if editable %}<button type="submit" class="btn btn-primary">Save changes</button>{% endif %}
+    </form>
+  </div>
+
+{% elif tab == 'private' %}
+  <div class="card">
+    <form method="POST" action="{{ url_for('edit_profile', user_id=target.id) }}">
+      <input type="hidden" name="tab" value="private">
+      <div class="form-row">
+        <div class="field"><label for="date_of_birth">Date of Birth</label><input id="date_of_birth" type="date" name="date_of_birth" value="{{ target.date_of_birth or '' }}" {{ '' if editable else 'readonly' }}></div>
+        <div class="field"><label for="personal_email">Personal Email</label><input id="personal_email" type="email" name="personal_email" value="{{ target.personal_email or '' }}" {{ '' if editable else 'readonly' }}></div>
+      </div>
+      <div class="field"><label for="residing_address">Residing Address</label><input id="residing_address" type="text" name="residing_address" value="{{ target.residing_address or '' }}" {{ '' if editable else 'readonly' }}></div>
+      <div class="form-row">
+        <div class="field"><label for="gender">Gender</label><input id="gender" type="text" name="gender" value="{{ target.gender or '' }}" {{ '' if editable else 'readonly' }}></div>
+        <div class="field"><label for="nationality">Nationality</label><input id="nationality" type="text" name="nationality" value="{{ target.nationality or '' }}" {{ '' if editable else 'readonly' }}></div>
+      </div>
+      <div class="field"><label for="marital_status">Marital Status</label><input id="marital_status" type="text" name="marital_status" value="{{ target.marital_status or '' }}" {{ '' if editable else 'readonly' }}></div>
+      <h3 style="margin:18px 0 12px;">Bank details</h3>
+      <div class="form-row">
+        <div class="field"><label for="bank_account_number">Account Number</label><input id="bank_account_number" type="text" name="bank_account_number" value="{{ target.bank_account_number or '' }}" {{ '' if editable else 'readonly' }}></div>
+        <div class="field"><label for="bank_name">Bank Name</label><input id="bank_name" type="text" name="bank_name" value="{{ target.bank_name or '' }}" {{ '' if editable else 'readonly' }}></div>
+      </div>
+      <div class="field"><label for="ifsc_code">IFSC Code</label><input id="ifsc_code" type="text" name="ifsc_code" value="{{ target.ifsc_code or '' }}" {{ '' if editable else 'readonly' }}></div>
+      <h3 style="margin:18px 0 12px;">Identifiers</h3>
+      <div class="form-row">
+        <div class="field"><label for="pan_no">PAN No</label><input id="pan_no" type="text" name="pan_no" value="{{ target.pan_no or '' }}" {{ '' if editable else 'readonly' }}></div>
+        <div class="field"><label for="uan_no">UAN No</label><input id="uan_no" type="text" name="uan_no" value="{{ target.uan_no or '' }}" {{ '' if editable else 'readonly' }}></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label for="emp_code">Emp Code</label><input id="emp_code" type="text" value="{{ target.emp_code or '' }}" readonly></div>
+        <div class="field"><label for="login_id">Login ID</label><input id="login_id" type="text" value="{{ target.login_id }}" readonly></div>
+      </div>
+      {% if editable %}<button type="submit" class="btn btn-primary">Save changes</button>{% endif %}
+    </form>
+  </div>
+
+{% elif tab == 'resume' %}
+  <div class="card">
+    <p class="subtitle" style="margin-bottom:14px;">Upload a resume document (PDF, DOC).</p>
+    {% if editable %}
+    <form method="POST" action="{{ url_for('edit_profile', user_id=target.id) }}" enctype="multipart/form-data">
+      <input type="hidden" name="tab" value="resume">
+      <div class="field"><input type="file" name="resume" accept=".pdf,.doc,.docx"></div>
+      <button type="submit" class="btn btn-primary">Upload</button>
+    </form>
+    {% else %}
+    <div class="empty-state">No resume uploaded yet.</div>
+    {% endif %}
+  </div>
+
+{% elif tab == 'skills' %}
+  <div class="card">
+    <h3 style="margin-bottom:12px;">Skills</h3>
+    <div style="margin-bottom:16px;">
+      {% for s in skills %}<span class="skill-tag">{{ s.skill_name }}</span>{% else %}<span class="subtitle">No skills added yet.</span>{% endfor %}
+    </div>
+    {% if editable %}
+    <form method="POST" action="{{ url_for('edit_profile', user_id=target.id) }}" style="display:flex; gap:10px; max-width:360px;">
+      <input type="hidden" name="tab" value="skills">
+      <input type="text" name="new_skill" placeholder="Add a skill">
+      <button type="submit" class="btn btn-primary btn-sm">+ Add</button>
+    </form>
+    {% endif %}
+  </div>
+
+{% elif tab == 'certifications' %}
+  <div class="card">
+    <h3 style="margin-bottom:12px;">Certifications</h3>
+    {% for c in certifications %}
+      <div class="salary-line"><span>{{ c.name }} — {{ c.issuing_body or '' }}</span><span>{{ c.date_earned or '' }}</span></div>
+    {% else %}
+      <div class="empty-state">No certifications added yet.</div>
+    {% endfor %}
+  </div>
+
+{% elif tab == 'salary' and can_edit_all %}
+  <div class="main-layout">
+    <section class="main-content">
+      <section class="card-group">
+        <div class="card">
+          <h3 style="margin-bottom:4px;">Salary structure</h3>
+          <p class="subtitle" style="margin-bottom:18px;">Components recalculate automatically as you type.</p>
+          <form method="POST" action="{{ url_for('update_salary', user_id=target.id) }}" id="salaryForm">
+            <div class="field">
+              <label>Monthly Wage (₹)</label>
+              <input type="number" step="0.01" name="monthly_wage" id="wage" value="{{ salary.monthly_wage if salary else 0 }}">
+            </div>
+            <div class="form-row">
+              <div class="field"><label>Basic % of Wage</label><input type="number" step="0.01" name="basic_pct" id="basic_pct" value="{{ salary.basic_pct if salary else 50 }}"></div>
+              <div class="field"><label>HRA % of Basic</label><input type="number" step="0.01" name="hra_pct" id="hra_pct" value="{{ salary.hra_pct if salary else 50 }}"></div>
+            </div>
+            <div class="form-row">
+              <div class="field"><label>Standard Allowance (₹/month)</label><input type="number" step="0.01" name="standard_allowance" id="standard_allowance" value="{{ salary.standard_allowance if salary else 4167 }}"></div>
+              <div class="field"><label>Performance Bonus % of Basic</label><input type="number" step="0.01" name="performance_bonus_pct" id="performance_bonus_pct" value="{{ salary.performance_bonus_pct if salary else 8.33 }}"></div>
+            </div>
+            <div class="form-row">
+              <div class="field"><label>Leave Travel Allowance % of Basic</label><input type="number" step="0.01" name="lta_pct" id="lta_pct" value="{{ salary.lta_pct if salary else 8.33 }}"></div>
+              <div class="field"><label>Professional Tax (₹/month)</label><input type="number" step="0.01" name="professional_tax" id="professional_tax" value="{{ salary.professional_tax if salary else 200 }}"></div>
+            </div>
+            <div class="form-row">
+              <div class="field"><label>PF — Employee % of Basic</label><input type="number" step="0.01" name="pf_employee_pct" id="pf_employee_pct" value="{{ salary.pf_employee_pct if salary else 12 }}"></div>
+              <div class="field"><label>PF — Employer % of Basic</label><input type="number" step="0.01" name="pf_employer_pct" id="pf_employer_pct" value="{{ salary.pf_employer_pct if salary else 12 }}"></div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="margin-top:16px;">Save salary structure</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="card-group">
+        <details class="data-panel">
+          <summary>Salary Components (detailed)</summary>
+          <div class="panel-body">
+            <div class="table-wrap">
+              <table>
+                <tr><td>Basic Salary</td><td id="det_basic">₹0.00</td></tr>
+                <tr><td>House Rent Allowance</td><td id="det_hra">₹0.00</td></tr>
+                <tr><td>Standard Allowance</td><td id="det_std">₹0.00</td></tr>
+                <tr><td>Performance Bonus</td><td id="det_bonus">₹0.00</td></tr>
+                <tr><td>Leave Travel Allowance</td><td id="det_lta">₹0.00</td></tr>
+                <tr><td>Fixed Allowance (remainder)</td><td id="det_fixed">₹0.00</td></tr>
+                <tr><td>Professional Tax (deduction)</td><td id="det_tax">₹0.00</td></tr>
+                <tr><td>PF — Employee (deduction)</td><td id="det_pf_emp">₹0.00</td></tr>
+                <tr><td>PF — Employer (company cost)</td><td id="det_pf_emp2">₹0.00</td></tr>
+                <tr><th>Components total vs wage</th><th id="det_total">₹0.00</th></tr>
+              </table>
+            </div>
+          </div>
+        </details>
+      </section>
+    </section>
+
+    <aside class="calc-sidebar">
+      <div class="card">
+        <h3 style="margin-bottom:4px;">Live Computation</h3>
+        <div class="subtitle" style="margin-bottom:12px;">Updated as you type</div>
+        <div>
+          <div class="salary-line"><span>Basic Salary</span><strong id="out_basic">₹0.00</strong></div>
+          <div class="salary-line"><span>House Rent Allowance</span><strong id="out_hra">₹0.00</strong></div>
+          <div class="salary-line"><span>Standard Allowance</span><strong id="out_std">₹0.00</strong></div>
+          <div class="salary-line"><span>Performance Bonus</span><strong id="out_bonus">₹0.00</strong></div>
+          <div class="salary-line"><span>Leave Travel Allowance</span><strong id="out_lta">₹0.00</strong></div>
+          <div class="salary-line"><span>Fixed Allowance (remainder)</span><strong id="out_fixed">₹0.00</strong></div>
+          <div class="salary-line"><span>Professional Tax (deduction)</span><strong id="out_tax">₹0.00</strong></div>
+          <div class="salary-line"><span>PF — Employee (deduction)</span><strong id="out_pf_emp">₹0.00</strong></div>
+          <div class="salary-line"><span>PF — Employer (company cost)</span><strong id="out_pf_emp2">₹0.00</strong></div>
+          <div class="salary-total"><span>Components total vs wage</span><span id="out_total">₹0.00</span></div>
+          <div class="warn-text" id="out_warn" style="display:none;">Components exceed the defined wage.</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if tab == 'salary' and can_edit_all %}
+<script src="{{ url_for('static', filename='js/salary_calc.js') }}"></script>
+{% endif %}
+{% endblock %}
