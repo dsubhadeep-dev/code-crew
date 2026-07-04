@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Attendance — HRMS-BY CODE CREW{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Attendance</h1>
+    <p class="subtitle">All employees for the selected date.</p>
+  </div>
+</div>
+
+<form method="GET" style="display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap;">
+  <input type="date" name="date" value="{{ selected_date }}" style="max-width:200px;" onchange="this.form.submit()">
+  <input type="text" name="q" placeholder="Search employee" value="{{ q }}" style="max-width:240px;">
+  <button type="submit" class="btn btn-outline btn-sm">Search</button>
+</form>
+
+<section class="card-group">
+  <details class="data-panel" open>
+    <summary>Attendance records — {{ selected_date }}</summary>
+    <div class="panel-body">
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Employee</th><th>Check In</th><th>Check Out</th><th>Work Hours</th><th>Status</th></tr></thead>
+            <tbody>
+              {% for r in rows %}
+              <tr>
+                <td>{{ r.emp_name }}</td>
+                <td>{{ r.check_in or '—' }}</td>
+                <td>{{ r.check_out or '—' }}</td>
+                <td>{{ r.work_hours or '—' }}</td>
+                <td><span class="badge {{ 'present' if r.check_in else 'absent' }}">{{ 'Present' if r.check_in else 'Absent' }}</span></td>
+              </tr>
+              {% else %}
+              <tr><td colspan="5"><div class="empty-state">No attendance records for this date.</div></td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </details>
+</section>
+{% endblock %}

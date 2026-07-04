@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Time Off — HRMS-BY CODE CREW{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Time off requests</h1>
+    <p class="subtitle">Approve or reject leave for the whole team.</p>
+  </div>
+</div>
+
+<section class="card-group">
+  <details class="data-panel" open>
+    <summary>Leave requests</summary>
+    <div class="panel-body">
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Employee</th><th>Type</th><th>Start</th><th>End</th><th>Days</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody>
+              {% for r in rows %}
+              <tr>
+                <td>{{ r.emp_name }}</td>
+                <td>{{ r.leave_type|capitalize }}</td>
+                <td>{{ r.start_date }}</td>
+                <td>{{ r.end_date }}</td>
+                <td>{{ r.days }}</td>
+                <td><span class="badge {{ r.status }}">{{ r.status|capitalize }}</span></td>
+                <td>
+                  {% if r.status == 'pending' %}
+                  <form method="POST" action="{{ url_for('approve_leave', leave_id=r.id) }}" style="display:inline;">
+                    <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                  </form>
+                  <form method="POST" action="{{ url_for('reject_leave', leave_id=r.id) }}" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                  </form>
+                  {% else %}
+                  <span class="subtitle">{{ r.admin_comment or '—' }}</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% else %}
+              <tr><td colspan="7"><div class="empty-state">No leave requests yet.</div></td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </details>
+</section>
+{% endblock %}

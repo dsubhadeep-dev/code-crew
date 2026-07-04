@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forgot Password — HRMS-BY CODE CREW</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v={{ static_version('css/style.css') }}">
+</head>
+<body>
+<div class="auth-wrap">
+  <div class="auth-card">
+    <h1>Reset your password</h1>
+    <p class="subtitle">Enter your email and we’ll send an OTP to reset your password.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <form method="POST">
+      <div class="field">
+        <label>Email address</label>
+        <input type="email" name="email" required autofocus>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Send OTP</button>
+    </form>
+
+    <div class="auth-switch"><a href="{{ url_for('login') }}">Back to Sign In</a></div>
+  </div>
+</div>
+</body>
+</html>

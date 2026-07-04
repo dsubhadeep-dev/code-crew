@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Work Dashboard — HRMS{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Work Dashboard</h1>
+    <p class="subtitle">Assign daily work, track progress, and review proof from employees.</p>
+  </div>
+</div>
+
+<div class="card" style="margin-bottom:20px;">
+  <h3 style="margin-bottom:12px;">Assign New Work</h3>
+  <form method="POST" action="{{ url_for('add_work_task') }}">
+    <div class="form-row">
+      <div class="field">
+        <label>Task Title</label>
+        <input type="text" name="title" required>
+      </div>
+      <div class="field">
+        <label>Assign To</label>
+        <select name="assigned_to" required>
+          {% for employee in employees %}
+          <option value="{{ employee.id }}">{{ employee.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Description</label>
+      <textarea name="description"></textarea>
+    </div>
+    <div class="field">
+      <label>Due Date</label>
+      <input type="date" name="due_date">
+    </div>
+    <button type="submit" class="btn btn-primary">Assign Task</button>
+  </form>
+</div>
+
+<div class="card">
+  <h3 style="margin-bottom:12px;">All Work Tasks</h3>
+  {% if tasks %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Task</th>
+          <th>Assigned To</th>
+          <th>Due</th>
+          <th>Status</th>
+          <th>Progress</th>
+          <th>Proof</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for task in tasks %}
+        <tr>
+          <td>
+            <strong>{{ task.title }}</strong><br>
+            <small>{{ task.description or '—' }}</small>
+          </td>
+          <td>{{ task.employee_name }}</td>
+          <td>{{ task.due_date or '—' }}</td>
+          <td>{{ task.status }}</td>
+          <td>{{ task.progress }}%</td>
+          <td>
+            {% if task.proof_links %}<div><small>Links: {{ task.proof_links }}</small></div>{% endif %}
+            {% if task.proof_images %}<div><small>Images: {{ task.proof_images }}</small></div>{% endif %}
+            {% if not task.proof_links and not task.proof_images %}—{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">No work tasks yet.</div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reset Password — HRMS-BY CODE CREW</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v={{ static_version('css/style.css') }}">
+</head>
+<body>
+<div class="auth-wrap">
+  <div class="auth-card">
+    <h1>Choose a new password</h1>
+    <p class="subtitle">Enter the OTP sent to your email and set a new password.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <form method="POST">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" name="email" value="{{ email or '' }}" required>
+      </div>
+      <div class="field">
+        <label>OTP</label>
+        <input type="text" name="otp" required>
+      </div>
+      <div class="field">
+        <label>New Password</label>
+        <input type="password" name="password" required>
+      </div>
+      <div class="field">
+        <label>Confirm Password</label>
+        <input type="password" name="confirm_password" required>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Update Password</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>

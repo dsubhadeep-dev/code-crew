@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Add Employee — HRMS-BY CODE CREW{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Add employee</h1>
+</div>
+
+<div class="card" style="max-width:560px;">
+  <form method="POST">
+    <div class="field">
+      <label>Full Name</label>
+      <input type="text" name="name" required>
+    </div>
+    <div class="form-row">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" name="email" required>
+      </div>
+      <div class="field">
+        <label>Phone</label>
+        <input type="text" name="phone">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field">
+        <label>Department</label>
+        <input type="text" name="department">
+      </div>
+      <div class="field">
+        <label>Job Position</label>
+        <input type="text" name="job_position">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field">
+        <label>Manager</label>
+        <input type="text" name="manager">
+      </div>
+      <div class="field">
+        <label>Date of Joining</label>
+        <input type="date" name="date_of_joining">
+      </div>
+    </div>
+    <p class="subtitle" style="margin-bottom:16px;">A Login ID and temporary password will be generated automatically — you'll see them on the next screen to share with the employee.</p>
+    <button type="submit" class="btn btn-primary">Create Employee</button>
+    <a href="{{ url_for('employees') }}" class="btn btn-outline">Cancel</a>
+  </form>
+</div>
+{% endblock %}

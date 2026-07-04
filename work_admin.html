@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Up — HRMS-BY CODE CREW</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v={{ static_version('css/style.css') }}">
+</head>
+<body>
+<div class="auth-wrap">
+  <div class="auth-card" style="max-width:440px;">
+    <h1>Set up your company</h1>
+    <p class="subtitle">This creates your Admin/HR account</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <form method="POST" enctype="multipart/form-data">
+      <div class="field">
+        <label>Sign up as</label>
+        <select name="role">
+          <option value="admin" {% if role == 'admin' %}selected{% endif %}>Admin / HR</option>
+          <option value="employee" {% if role == 'employee' %}selected{% endif %}>Employee</option>
+        </select>
+      </div>
+      <div class="field" id="company-field">
+        <label>Company Name</label>
+        <input type="text" name="company_name">
+      </div>
+      <div class="field">
+        <label>Your Name</label>
+        <input type="text" name="name" required>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Email</label>
+          <input type="email" name="email" required>
+        </div>
+        <div class="field">
+          <label>Phone</label>
+          <input type="text" name="phone">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Password</label>
+          <input type="password" name="password" required>
+        </div>
+        <div class="field">
+          <label>Confirm Password</label>
+          <input type="password" name="confirm_password" required>
+        </div>
+      </div>
+      <div class="field">
+        <label>Upload Logo (optional)</label>
+        <input type="file" name="logo" accept="image/*">
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Sign Up</button>
+    </form>
+
+    <div class="auth-switch">Already have an account? <a href="{{ url_for('login') }}">Sign In</a></div>
+  </div>
+</div>
+</body>
+</html>

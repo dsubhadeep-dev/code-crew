@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Time Off — HRMS-BY CODE CREW{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Time off</h1>
+    <p class="subtitle">Your leave balances and requests.</p>
+  </div>
+  <button class="btn btn-primary" onclick="document.getElementById('applyModal').style.display='flex'">+ New Request</button>
+</div>
+
+<div class="grid cols-2" style="margin-bottom:20px;">
+  {% for a in allocations %}
+  <div class="card stat">
+    <div class="num">{{ a.days_available }} Days</div>
+    <div class="label">{{ a.leave_type|capitalize }} time off available</div>
+  </div>
+  {% endfor %}
+</div>
+
+<section class="card-group">
+  <details class="data-panel" open>
+    <summary>Your leave requests</summary>
+    <div class="panel-body">
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Type</th><th>Start</th><th>End</th><th>Days</th><th>Status</th><th>Remarks</th></tr></thead>
+            <tbody>
+              {% for r in rows %}
+              <tr>
+                <td>{{ r.leave_type|capitalize }}</td>
+                <td>{{ r.start_date }}</td>
+                <td>{{ r.end_date }}</td>
+                <td>{{ r.days }}</td>
+                <td><span class="badge {{ r.status }}">{{ r.status|capitalize }}</span></td>
+                <td>{{ r.remarks or '—' }}</td>
+              </tr>
+              {% else %}
+              <tr><td colspan="6"><div class="empty-state">No leave requests yet.</div></td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </details>
+</section>
+
+<div id="applyModal" style="display:none; position:fixed; inset:0; background:rgba(20,35,31,0.45); align-items:center; justify-content:center; z-index:50;">
+  <div class="card" style="width:100%; max-width:420px;">
+    <h3 style="margin-bottom:14px;">New time off request</h3>
+    <form method="POST" action="{{ url_for('apply_leave') }}">
+      <div class="field">
+        <label>Time Off Type</label>
+        <select name="leave_type" required>
+          <option value="paid">Paid Time Off</option>
+          <option value="sick">Sick Leave</option>
+          <option value="unpaid">Unpaid Leave</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Start Date</label><input type="date" name="start_date" required></div>
+        <div class="field"><label>End Date</label><input type="date" name="end_date" required></div>
+      </div>
+      <div class="field"><label>Remarks</label><textarea name="remarks" rows="2"></textarea></div>
+      <div style="display:flex; gap:10px;">
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('applyModal').style.display='none'">Discard</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

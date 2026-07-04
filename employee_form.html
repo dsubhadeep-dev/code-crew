@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ code }} — HRMS-BY CODE CREW</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v={{ static_version('css/style.css') }}">
+</head>
+<body>
+<div class="auth-wrap">
+  <div class="auth-card" style="text-align:center;">
+    <h1 style="font-size:40px;">{{ code }}</h1>
+    <p class="subtitle">{{ message }}</p>
+    <a href="/" class="btn btn-primary" style="margin-top:12px;">Go home</a>
+  </div>
+</div>
+</body>
+</html>

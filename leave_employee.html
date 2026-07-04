@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}My Work — HRMS{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>My Work</h1>
+    <p class="subtitle">See your daily tasks, update progress, and share proof of completion.</p>
+  </div>
+</div>
+
+{% if tasks %}
+<div class="grid cols-2">
+  {% for task in tasks %}
+  <div class="card">
+    <h3>{{ task.title }}</h3>
+    <p class="subtitle" style="margin:8px 0 12px;">{{ task.description or 'No description provided.' }}</p>
+    <div class="field">
+      <label>Assigned by</label>
+      <div>{{ task.assigned_by_name }}</div>
+    </div>
+    <div class="field">
+      <label>Due date</label>
+      <div>{{ task.due_date or 'No due date' }}</div>
+    </div>
+    <form method="POST" action="{{ url_for('update_work_task', task_id=task.id) }}">
+      <div class="field">
+        <label>Progress (%)</label>
+        <input type="number" min="0" max="100" name="progress" value="{{ task.progress }}">
+      </div>
+      <div class="field">
+        <label>Status</label>
+        <select name="status">
+          <option value="pending" {% if task.status == 'pending' %}selected{% endif %}>Pending</option>
+          <option value="in_progress" {% if task.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+          <option value="done" {% if task.status == 'done' %}selected{% endif %}>Done</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Proof links (Google Drive / Sheets / Docs)</label>
+        <textarea name="proof_links" placeholder="https://drive.google.com/...">{{ task.proof_links }}</textarea>
+      </div>
+      <div class="field">
+        <label>Proof images / notes</label>
+        <textarea name="proof_images" placeholder="Add image names, notes, or references">{{ task.proof_images }}</textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Save Progress</button>
+    </form>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card empty-state">No work assigned to you yet.</div>
+{% endif %}
+{% endblock %}

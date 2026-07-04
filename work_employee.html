@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — HRMS-BY CODE CREW{% endblock %}
+{% block content %}
+{% set user = current_user() %}
+<div class="page-header">
+  <div>
+    <h1>Hi, {{ user.name.split(' ')[0] }} 👋</h1>
+    <p class="subtitle">Here's what's on your plate today.</p>
+  </div>
+</div>
+
+<div class="grid cols-3">
+  <a href="{{ url_for('profile', user_id=user.id) }}" class="card stat">
+    <div class="label">Profile</div>
+    <div class="num" style="font-size:16px;">View & edit</div>
+  </a>
+  <a href="{{ url_for('attendance') }}" class="card stat">
+    <div class="label">Attendance</div>
+    <div class="num" style="font-size:16px;">{% if att_today and att_today.check_in %}Checked in {{ att_today.check_in }}{% else %}Not checked in{% endif %}</div>
+  </a>
+  <a href="{{ url_for('leave') }}" class="card stat">
+    <div class="label">Leave Requests</div>
+    <div class="num" style="font-size:16px;">{{ my_leaves|length }} recent</div>
+  </a>
+</div>
+
+<div class="card" style="margin-top:20px;">
+  <h3 style="margin-bottom:12px;">Recent activity</h3>
+  {% if my_leaves %}
+    {% for l in my_leaves %}
+      <div class="salary-line">
+        <span>{{ l.leave_type|capitalize }} leave · {{ l.start_date }} → {{ l.end_date }}</span>
+        <span class="badge {{ l.status }}">{{ l.status|capitalize }}</span>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty-state">No recent leave activity yet.</div>
+  {% endif %}
+</div>
+{% endblock %}
